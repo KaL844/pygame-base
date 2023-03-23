@@ -19,7 +19,7 @@ def main():
     running = True
     clock = pygame.time.Clock()
 
-    game_scene = scene.ExampleScene(scene_manager, (255, 255, 0))
+    game_scene = scene.ExampleScene(scene_manager, (0, 0, 0))
     scene_manager.push(game_scene)
 
     while not scene_manager.isEmpty() and running:

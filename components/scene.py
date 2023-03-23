@@ -2,6 +2,7 @@ import pygame
 import typing
 import random
 from components.widget import Button, Label, Animation
+from components.effect import EffectManager, FireworkEffect, SmokeUpEffect, SmokeCircleEffect
 from utils.constants import Align, EventType
 
 class Scene:
@@ -61,6 +62,7 @@ class ExampleScene(Scene):
         super().__init__()
 
         self.scene_manager = scene_manager
+        self.effect_manager = EffectManager()
         self.background_color = color
         self.start_btn = Button(x=300, y=300, width=100, height=50, anchor=Align.Mid_Center, text="START", pressed_color=(150, 150, 150))
         self.start_btn.add_event_listener(EventType.Mouse_Touch_End, self.on_start_click)
@@ -73,7 +75,8 @@ class ExampleScene(Scene):
         self.label.draw(screen)
         self.start_btn.draw(screen)
         self.animation.draw(screen)
-
+        self.effect_manager.draw(screen)
+        
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN: return
 
@@ -82,6 +85,12 @@ class ExampleScene(Scene):
         if keys[pygame.K_SPACE]:
             self.scene_manager.pop()
             self.scene_manager.push(ExampleScene(self.scene_manager, (random.randint(0, 256), random.randint(0, 256), random.randint(0, 256))))
+        elif keys[pygame.K_e]:
+            # self.effect_manager.add_effect(FireworkEffect(10, 0.1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
+            # self.effect_manager.add_effect(SmokeEffect(5, 0.1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
+            self.effect_manager.add_effect(SmokeCircleEffect(4))
+            pass
+            
 
     def on_start_click(self, _: dict) -> None:
         self.animation.run(0.2)
