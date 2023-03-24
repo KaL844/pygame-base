@@ -175,14 +175,12 @@ class SparkleEffect(Effect):
             color_index = random.randint(0, 4)
             self.color = SparkleEffect.COLOR_LIST[color_index]
         def draw(self, screen: pygame.Surface) -> None:
-            alpha = random.uniform(0, math.pi * 2)
-            img = pygame.Surface((self.edge, self.edge))
-            pygame.draw.polygon(img, self.color, [
-                (self.x + self.edge, self.y), 
+            pygame.draw.polygon(screen, self.color, [
+                (self.x, self.y), 
                 (self.x + self.edge, self.y), 
                 (self.x + self.edge, self.y + self.edge), 
-                (self.x, self.y + self.edge)])
-            screen.blit(pygame.transform.rotate(img, alpha), (self.x, self.y))
+                (self.x, self.y + self.edge)
+            ])
         def update(self) -> None:
             self.live_time -= 1
 
