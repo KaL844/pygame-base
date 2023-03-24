@@ -138,11 +138,11 @@ class SmokeCircleEffect(Effect):
             self.alpha_a = 6
             self.img = utils.scale(SmokeCircleEffect.SmokeParticle.IMAGE, random.uniform(0.15, 0.25))
 
-    def __init__(self, live_time: float) -> None:
+    def __init__(self, live_time: float, x: int, y:int) -> None:
         super().__init__(live_time, live_time / 4)
         self.radius = 40
-        self.x = 100
-        self.y = 100
+        self.x = x
+        self.y = y
         self.num_of_particals = 20
         self.spawn_particles()
 
@@ -163,3 +163,44 @@ class SmokeCircleEffect(Effect):
     def delete_particle(self, particle: SmokeParticle) -> None:
         if particle.alpha <= 0:
             self.particles.remove(particle)
+
+class SparkleEffect(Effect):
+    COLOR_LIST = [(102,0,102), (153,0,153), (204,0,204), (255,0,255), (255,51,255), (255,102,155), (255,204,255)]
+    class SparkleParticle:
+        def __init__(self, x: int, y: int) -> None:
+            self.x = x + random.randint(-20, 20)
+            self.y = y + random.randint(-20, 20)
+            self.edge = random.randint(3, 7)
+            self.live_time = 3
+            color_index = random.randint(0, 4)
+            self.color = SparkleEffect.COLOR_LIST[color_index]
+        def draw(self, screen: pygame.Surface) -> None:
+            alpha = random.uniform(0, math.pi * 2)
+            img = pygame.Surface((self.edge, self.edge))
+            pygame.draw.polygon(img, self.color, [
+                (self.x + self.edge, self.y), 
+                (self.x + self.edge, self.y), 
+                (self.x + self.edge, self.y + self.edge), 
+                (self.x, self.y + self.edge)])
+            screen.blit(pygame.transform.rotate(img, alpha), (self.x, self.y))
+        def update(self) -> None:
+            self.live_time -= 1
+
+    def __init__(self, live_time: float, die_speed: float, x: int, y: int) -> None:
+        super().__init__(live_time, die_speed)
+        self.x = x
+        self.y = y
+        self.spawn_particles()
+
+    def spawn_particles(self):
+        self.particles.append(SparkleEffect.SparkleParticle(self.x, self.y))
+
+    def draw_particle(self, screen: pygame.surface.Surface, particle: SparkleParticle) -> None:
+        particle.draw(screen)
+
+    def delete_particle(self, particle: SparkleParticle) -> None:
+        if particle.live_time <= 0:
+            self.particles.remove(particle)
+    
+    def update_particle(self, particle: SparkleParticle):
+        particle.update()

@@ -2,7 +2,7 @@ import pygame
 import typing
 import random
 from components.widget import Button, Label, Animation
-from components.effect import EffectManager, FireworkEffect, SmokeUpEffect, SmokeCircleEffect
+from components.effect import EffectManager, FireworkEffect, SmokeUpEffect, SmokeCircleEffect, SparkleEffect
 from utils.constants import Align, EventType
 
 class Scene:
@@ -78,6 +78,9 @@ class ExampleScene(Scene):
         self.effect_manager.draw(screen)
         
     def handle_event(self, event: pygame.event.Event) -> None:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            self.effect_manager.add_effect(SparkleEffect(2, 0.1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
+            
         if event.type != pygame.KEYDOWN: return
 
         keys = pygame.key.get_pressed()
@@ -88,7 +91,8 @@ class ExampleScene(Scene):
         elif keys[pygame.K_e]:
             # self.effect_manager.add_effect(FireworkEffect(10, 0.1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
             # self.effect_manager.add_effect(SmokeEffect(5, 0.1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
-            self.effect_manager.add_effect(SmokeCircleEffect(4))
+            # self.effect_manager.add_effect(SmokeCircleEffect(4))
+            self.effect_manager.add_effect(SparkleEffect(2, 0.1))
             pass
             
 
