@@ -18,13 +18,12 @@ class EffectManager:
         self.effects.append(effect)
 
 class Effect(ABC):
-    def __init__(self, live_time: float, die_speed: float) -> None:
+    def __init__(self, live_time: int) -> None:
         self.particles = []
         self.live_time = live_time
-        self.die_speed = die_speed
 
     def draw(self, screen: pygame.surface.Surface) -> None:
-        self.live_time -= self.die_speed
+        self.live_time -= 1
         if self.live_time > 0:
             self.spawn_particles()
         for particle in self.particles:
@@ -52,20 +51,20 @@ class Effect(ABC):
         return len(self.particles) == 0
     
 class FireworkEffect(Effect):
-    def __init__(self, live_time: float, die_speed: float, x: int, y: int) -> None:
-        super().__init__(live_time, die_speed)
+    def __init__(self, live_time: int, x: int, y: int) -> None:
+        super().__init__(live_time)
         self.x = x
         self.y = y
         self.spawn_particles()
 
     def spawn_particles(self):
-        self.particles.append([[self.x, self.y], [random.randint(0, 20) / 10 - 1, -2], random.randint(4, 6)])
+        self.particles.append([[self.x, self.y], [random.randint(0, 20) / 10 - 1, -4], random.randint(4, 6)])
     
     def update_particle(self, particle):
         particle[0][0] += particle[1][0]
         particle[0][1] += particle[1][1]
         particle[2] -= 0.1
-        particle[1][1] += 0.1
+        particle[1][1] += 0.2
 
     def draw_particle(self, screen: pygame.surface.Surface, particle) -> None:
         pygame.draw.circle(screen, (255, 255, 255), [int(particle[0][0]), int(particle[0][1])], int(particle[2]))
@@ -89,8 +88,8 @@ class SmokeUpEffect(Effect):
             self.vy = (4 + random.randint(7, 10) / 10) * -1
             self.k = 0.04 * random.random() * random.choice([-1, 1])
 
-    def __init__(self, live_time: float, die_speed: float, x: int, y: int) -> None:
-        super().__init__(live_time, die_speed)
+    def __init__(self, live_time: float, x: int, y: int) -> None:
+        super().__init__(live_time)
         self.particles: typing.List[SmokeUpEffect.SmokeParticle] = []
         self.x = x
         self.y = y
@@ -138,8 +137,8 @@ class SmokeCircleEffect(Effect):
             self.alpha_a = 6
             self.img = utils.scale(SmokeCircleEffect.SmokeParticle.IMAGE, random.uniform(0.15, 0.25))
 
-    def __init__(self, live_time: float, x: int, y:int) -> None:
-        super().__init__(live_time, live_time / 4)
+    def __init__(self, live_time: int, x: int, y:int) -> None:
+        super().__init__(live_time)
         self.radius = 40
         self.x = x
         self.y = y
@@ -184,8 +183,8 @@ class SparkleEffect(Effect):
         def update(self) -> None:
             self.live_time -= 1
 
-    def __init__(self, live_time: float, die_speed: float, x: int, y: int) -> None:
-        super().__init__(live_time, die_speed)
+    def __init__(self, live_time: float, x: int, y: int) -> None:
+        super().__init__(live_time)
         self.x = x
         self.y = y
         self.spawn_particles()

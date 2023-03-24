@@ -8,7 +8,7 @@ from utils.constants import Align, EventType
 class Scene:
     def __init__(self) -> None:
         pass
-    def handle_event(self, _: pygame.event.Event) -> None:
+    def handle_events(self, _: typing.List[pygame.event.Event]) -> None:
         pass
     def update(self) -> None:
         pass
@@ -30,26 +30,26 @@ class SceneManager:
     def isEmpty(self) -> bool:
         return len(self.scenes) == 0
     
-    def handle_event(self, event: pygame.event.Event) -> None:
+    def handle_events(self, events: typing.List[pygame.event.Event]) -> None:
         if self.isEmpty(): return
-        self.scenes[-1].handle_event(event)
+        self.scenes[0].handle_events(events)
 
     def update(self) -> None:
         if self.isEmpty(): return
-        self.scenes[-1].update()
+        self.scenes[0].update()
 
     def draw(self, screen: pygame.surface.Surface) -> None:
         if self.isEmpty(): return
-        self.scenes[-1].draw(screen)
+        self.scenes[0].draw(screen)
 
     def push(self, scene: Scene) -> None:
         self.scenes.append(scene)
         scene.onEnter()
 
-    def pop(self) -> None:
+    def peek(self) -> None:
         if self.isEmpty(): return
-        self.scenes[-1].onExit()
-        self.scenes.pop()
+        self.scenes[0].onExit()
+        self.scenes.pop(0)
 
     @staticmethod
     def getInstance() -> 'SceneManager':
@@ -77,11 +77,10 @@ class ExampleScene(Scene):
         self.animation.draw(screen)
         self.effect_manager.draw(screen)
         
-    def handle_event(self, event: pygame.event.Event) -> None:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            self.effect_manager.add_effect(SparkleEffect(2, 0.1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
-            
-        if event.type != pygame.KEYDOWN: return
+    def handle_events(self, events: typing.List[pygame.event.Event]) -> None:
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.effect_manager.add_effect(SparkleEffect(2, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
 
         keys = pygame.key.get_pressed()
 
@@ -89,10 +88,10 @@ class ExampleScene(Scene):
             self.scene_manager.pop()
             self.scene_manager.push(ExampleScene(self.scene_manager, (random.randint(0, 256), random.randint(0, 256), random.randint(0, 256))))
         elif keys[pygame.K_e]:
-            # self.effect_manager.add_effect(FireworkEffect(10, 0.1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
-            # self.effect_manager.add_effect(SmokeEffect(5, 0.1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
+            self.effect_manager.add_effect(FireworkEffect(20, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
+            # self.effect_manager.add_effect(SmokeEffect(5, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
             # self.effect_manager.add_effect(SmokeCircleEffect(4))
-            self.effect_manager.add_effect(SparkleEffect(2, 0.1))
+            # self.effect_manager.add_effect(SparkleEffect(2, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
             pass
             
 

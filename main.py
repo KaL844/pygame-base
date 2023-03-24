@@ -30,11 +30,12 @@ def main():
         pygame.display.update()
 
         # Handle events
-        for event in pygame.event.get():
-            scene_manager.handle_event(event)
-
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
+
+        scene_manager.handle_events(events)
 
         scene_manager.update()
 
